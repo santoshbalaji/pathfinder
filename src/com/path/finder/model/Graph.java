@@ -1,5 +1,6 @@
 package com.path.finder.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +11,15 @@ public class Graph
 	private Map<String, Edge> edgeMap;
 	private int vertexCount;
 	private int edgeCount;
-
+	
+	//Constructor which initializes the vertex and edge map 
 	public Graph() 
 	{
 		vertexMap = new HashMap<String, Vertex>();
 		edgeMap = new HashMap<String, Edge>();
 	}
-
+	
+	//Adding new vertex for graph without coordinates
 	public void addVertex(String label) 
 	{
 		Vertex vertex = new Vertex(label);
@@ -24,13 +27,15 @@ public class Graph
 		vertexCount++;
 	}
 
+	//Adding new vertex for graph with coordinates
 	public void addVertex(String label, int x, int y) 
 	{
 		Vertex vertex = new Vertex(label, x, y);
 		vertexMap.put(vertex.getLabel(), vertex);
 		vertexCount++;
 	}
-
+	
+	//Adding new edges 
 	public void addEdge(String label1, String label2) 
 	{
 		Edge edge1 = new Edge(vertexMap.get(label1), vertexMap.get(label2));
@@ -41,48 +46,45 @@ public class Graph
 		vertexMap.get(label2).getEdgeList().add(edge2);
 		edgeCount = edgeCount + 2;
 	}
-
-	public void removeVertex(String label) 
-	{
-		vertexMap.remove(label);
-		vertexCount--;
-	}
 	
+	//Method for running depth first search traversal
 	public void useDFS(String source,String destination,int option)
 	{
 		if(option == 1)
 		{
-			useDFSExplore(source);
+			System.out.println("---------Discovering the whole graph---------");
+			System.out.println("---------Starting source -" + source + "-------");
+			useDFSExplore(source, new ArrayList<String>());
 		}
 		else if(option == 2)
 		{
-			useDFSFindPath(source,destination);
-		}
-		else if(option == 3)
-		{
+			System.out.println("---------Discovering all path for given destination from source---------");
+			System.out.println("---------Starting source -" + source + "Destination -------");
 			useDFSFindAllPath(source,destination);
 		}
 	}
 	
-	private void useDFSExplore(String source)
+	private void useDFSExplore(String source, List<String> currentPath)
 	{
-		System.out.println("-------Source Vertex-" + source + "-----------");
 		Vertex sourceVertex = vertexMap.get(source);
-		sourceVertex.setVisited(true);
 		List<Edge> neighboursList = sourceVertex.getEdgeList();
+		sourceVertex.setVisited(true);	
+		currentPath.add(source);
 		for(Edge edge : neighboursList)
 		{
 			if(!edge.getTwo().isVisited())
 			{
-				useDFSExplore(edge.getTwo().getLabel());
+				useDFSExplore(edge.getTwo().getLabel(), currentPath);
 			}
 		}
-		sourceVertex.setVisited(false);
-	}
-	
-	private void useDFSFindPath(String source,String destination)
-	{
 		
+		for(String path : currentPath)
+		{
+			System.out.print(" " + path + " ");
+		}
+		System.out.println("");
+		currentPath.remove(currentPath.size() - 1);
+		sourceVertex.setVisited(false);
 	}
 	
 	private void useDFSFindAllPath(String source,String destination)
@@ -173,22 +175,16 @@ public class Graph
 		String[] edges = { "A-B", "A-F", "E-F", "B-E", "B-C", "C-D", "D-E", "E-G", "D-H", "H-G", "H-I", "I-P", "P-K","I-J", "J-K", "K-N", "J-O", "O-N", "K-L", "L-M", "N-M" };
 		Graph graph = new Graph();
 		
-		System.out.println("----------Starting graph creation------------");
-		System.out.println("----------Starting vertex creation-----------");
 		for (int i = 0; i < labels.length; i++) 
 		{
 			String[] subCoordinates = coordinates[i].split(",");
 			graph.addVertex(labels[i], Integer.valueOf(subCoordinates[0]), Integer.valueOf(subCoordinates[1]));
 		}
-		System.out.println("----------Completed vertex creation----------");
-		System.out.println("----------Starting edge creation-------------");
 		for (int j = 0; j < edges.length; j++) 
 		{
 			String[] subEdges = edges[j].split("-");
 			graph.addEdge(subEdges[0], subEdges[1]);
 		}
-		System.out.println("---------Completed edge creation------------");
-		System.out.println("---------Completed graph creation-----------");
 		
 		graph.useDFS("A", null, 1);
 				
