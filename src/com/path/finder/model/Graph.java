@@ -11,15 +11,16 @@ public class Graph
 	private Map<String, Edge> edgeMap;
 	private int vertexCount;
 	private int edgeCount;
+	private List<List<String>> pathList;
 	
-	//Constructor which initializes the vertex and edge map 
+	//Constructor Initialising the Vertex and Edge Map
 	public Graph() 
 	{
 		vertexMap = new HashMap<String, Vertex>();
 		edgeMap = new HashMap<String, Edge>();
 	}
 	
-	//Adding new vertex for graph without coordinates
+	//Adding new vertex without coordinates
 	public void addVertex(String label) 
 	{
 		Vertex vertex = new Vertex(label);
@@ -27,7 +28,7 @@ public class Graph
 		vertexCount++;
 	}
 
-	//Adding new vertex for graph with coordinates
+	//Adding new vertex with coordinates
 	public void addVertex(String label, int x, int y) 
 	{
 		Vertex vertex = new Vertex(label, x, y);
@@ -35,7 +36,7 @@ public class Graph
 		vertexCount++;
 	}
 	
-	//Adding new edges 
+	//Add new edges for vertex
 	public void addEdge(String label1, String label2) 
 	{
 		Edge edge1 = new Edge(vertexMap.get(label1), vertexMap.get(label2));
@@ -47,105 +48,113 @@ public class Graph
 		edgeCount = edgeCount + 2;
 	}
 	
-	//Method for running depth first search traversal
+	//Main method for Depth first traversal
 	public void useDFS(String source,String destination,int option)
 	{
+		pathList = new ArrayList<List<String>>();
 		if(option == 1)
 		{
-			System.out.println("---------Discovering the whole graph---------");
-			System.out.println("---------Starting source -" + source + "-------");
 			useDFSExplore(source, new ArrayList<String>());
 		}
 		else if(option == 2)
 		{
-			System.out.println("---------Discovering all path for given destination from source---------");
-			System.out.println("---------Starting source -" + source + "Destination -------");
-			useDFSFindAllPath(source,destination);
+			useDFSFindAllPath(source,destination, new ArrayList<String>());
+			System.out.println("----" + pathList.size() + "-----");
+			for(List<String> list : pathList)
+			{
+				for(String path : list)
+				{
+					System.out.print(path);
+				}
+				System.out.println("");
+			}
 		}
 	}
 	
-	private void useDFSExplore(String source, List<String> currentPath)
+	//Depth first search to explore the whole graph from source to all destinations.
+	private void useDFSExplore(String source, List<String> completedPath)
 	{
 		Vertex sourceVertex = vertexMap.get(source);
+		completedPath.add(sourceVertex.getLabel());
+		sourceVertex.setVisited(true);
 		List<Edge> neighboursList = sourceVertex.getEdgeList();
-		sourceVertex.setVisited(true);	
-		currentPath.add(source);
 		for(Edge edge : neighboursList)
 		{
 			if(!edge.getTwo().isVisited())
 			{
-				useDFSExplore(edge.getTwo().getLabel(), currentPath);
+				useDFSExplore(edge.getTwo().getLabel(), completedPath);
 			}
 		}
 		
-		for(String path : currentPath)
+		for(String path : completedPath)
 		{
-			System.out.print(" " + path + " ");
+			System.out.print( " " + path + " " );
 		}
 		System.out.println("");
-		currentPath.remove(currentPath.size() - 1);
+		completedPath.remove(completedPath.size() - 1);
 		sourceVertex.setVisited(false);
 	}
 	
-	private void useDFSFindAllPath(String source,String destination)
+	//Depth first search to explore all available path from source to specified destination
+	private void useDFSFindAllPath(String source,String destination, List<String> completedPath)
 	{
-		
-	}
-	
-
-	public boolean useDFSTraversal(String source,String destination)
-	{
-		System.out.println("-------Source Vertex-" + source + "-----------");
-		System.out.println("-------Destin Vertex-" + destination + "----------");
 		Vertex sourceVertex = vertexMap.get(source);
-		Vertex destinationVertex = vertexMap.get(destination);
+		completedPath.add(source);
 		sourceVertex.setVisited(true);
-		
-		if(sourceVertex.getLabel().equals(destinationVertex.getLabel()))
-		{
-			System.out.println("Matching record found");
-			return true;
-		}
-		
 		List<Edge> neighboursList = sourceVertex.getEdgeList();
-		for(Edge edge : neighboursList)
+		if(source.equals(destination))
 		{
-			if(!edge.getTwo().isVisited())
+			List<String> list = new ArrayList<>();
+			list.addAll(completedPath);
+			pathList.add(list);
+		}
+		else
+		{
+			for(Edge edge : neighboursList)
 			{
-				boolean status = useDFSTraversal(edge.getTwo().getLabel(), destination);
-				if(status)
+				if(!edge.getTwo().isVisited() && !source.equals(destination))
 				{
-					return true;
+					useDFSFindAllPath(edge.getTwo().getLabel(),destination, completedPath);
 				}
 			}
 		}
-		
-		return false;
+		completedPath.remove(completedPath.size() - 1);
+		sourceVertex.setVisited(false);
 	}
 	
-	public void useBFSTraversal(String source,String destination)
+	public void useBFS(String source,String destination, int option)
 	{
+		if(option == 1)
+		{
+			useBFSExplore(source);
+		}
+		else if(option == 2)
+		{
+			useBFSFindAllPath(source, destination);
+		}
+	}
+	
+	public void useBFSExplore(String source)
+	{
+		List<Edge> queue = new ArrayList<Edge>();
+		Vertex sourceVertex = vertexMap.get(source);
+		queue.addAll(sourceVertex.getEdgeList());
+		while(!queue.isEmpty())
+		{
+			if(!queue.get(0).getTwo().isVisited())
+			{
+				System.out.println(queue.get(0).getOne().getLabel());
+				queue.get(0).getOne().setVisited(true);
+				queue.addAll(queue.get(0).getTwo().getEdgeList());
+			}
+			queue.remove(0);
+		}
 		
 	}
-
-	public Map<String, Vertex> getVertexMap() 
+	
+	public void useBFSFindAllPath(String source, String destination)
 	{
-		return vertexMap;
-	}
-
-	public void setVertexMap(Map<String, Vertex> vertexMap) 
-	{
-		this.vertexMap = vertexMap;
-	}
-
-	public Map<String, Edge> getEdgeMap() 
-	{
-		return edgeMap;
-	}
-
-	public void setEdgeMap(Map<String, Edge> edgeMap) 
-	{
-		this.edgeMap = edgeMap;
+		
 	}
 
 	public int getVertexCount() 
@@ -168,6 +177,9 @@ public class Graph
 		this.edgeCount = edgeCount;
 	}
 
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) 
 	{
 		String[] labels = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P" };
@@ -186,7 +198,7 @@ public class Graph
 			graph.addEdge(subEdges[0], subEdges[1]);
 		}
 		
-		graph.useDFS("A", null, 1);
+		graph.useBFS("A", null, 1);
 				
 	}
 }
