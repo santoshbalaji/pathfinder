@@ -13,7 +13,7 @@ public class Graph
 	private int edgeCount;
 	private List<List<String>> pathList;
 	
-	//Constructor Initialising the Vertex and Edge Map
+	//Constructor Initializing the Vertex and Edge Map
 	public Graph() 
 	{
 		vertexMap = new HashMap<String, Vertex>();
@@ -59,7 +59,6 @@ public class Graph
 		else if(option == 2)
 		{
 			useDFSFindAllPath(source,destination, new ArrayList<String>());
-			System.out.println("----" + pathList.size() + "-----");
 			for(List<String> list : pathList)
 			{
 				for(String path : list)
@@ -122,39 +121,36 @@ public class Graph
 		sourceVertex.setVisited(false);
 	}
 	
+	//Main method for Breadth first search 
 	public void useBFS(String source,String destination, int option)
 	{
 		if(option == 1)
 		{
 			useBFSExplore(source);
 		}
-		else if(option == 2)
-		{
-			useBFSFindAllPath(source, destination);
-		}
 	}
 	
+	//Breadth first search to explore all vertex at least once
 	public void useBFSExplore(String source)
 	{
 		List<Edge> queue = new ArrayList<Edge>();
 		Vertex sourceVertex = vertexMap.get(source);
-		queue.addAll(sourceVertex.getEdgeList());
-		while(!queue.isEmpty())
+		if(sourceVertex != null)
 		{
-			if(!queue.get(0).getTwo().isVisited())
+			sourceVertex.setVisited(true);
+			queue.addAll(sourceVertex.getEdgeList());
+			System.out.print(source);
+			while(!queue.isEmpty())
 			{
-				System.out.println(queue.get(0).getOne().getLabel());
-				queue.get(0).getOne().setVisited(true);
-				queue.addAll(queue.get(0).getTwo().getEdgeList());
+				if(!queue.get(0).getTwo().isVisited())
+				{
+					System.out.print(queue.get(0).getTwo().getLabel());
+					queue.get(0).getTwo().setVisited(true);
+					queue.addAll(queue.get(0).getTwo().getEdgeList());
+				}
+				queue.remove(0);
 			}
-			queue.remove(0);
 		}
-		
-	}
-	
-	public void useBFSFindAllPath(String source, String destination)
-	{
-		
 	}
 
 	public int getVertexCount() 
@@ -177,14 +173,14 @@ public class Graph
 		this.edgeCount = edgeCount;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) 
 	{
 		String[] labels = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P" };
 		String[] coordinates = { "1,2", "1,1", "1,0", "2,0", "2,1", "2,2", "3,1", "3,0", "4,0", "5,0", "5,1", "5,2","6,2", "6,1", "6,0", "4,1" };
 		String[] edges = { "A-B", "A-F", "E-F", "B-E", "B-C", "C-D", "D-E", "E-G", "D-H", "H-G", "H-I", "I-P", "P-K","I-J", "J-K", "K-N", "J-O", "O-N", "K-L", "L-M", "N-M" };
+//		String[] labels = {"A","B","C","D"};
+//		String[] coordinates = {"0,1","1,1","2,1","1,0"};
+//		String[] edges = {"A-B","A-D","B-C","D-C","B-D"};
 		Graph graph = new Graph();
 		
 		for (int i = 0; i < labels.length; i++) 
@@ -198,7 +194,9 @@ public class Graph
 			graph.addEdge(subEdges[0], subEdges[1]);
 		}
 		
-		graph.useBFS("A", null, 1);
+//		graph.useDFS("A",null, 1);
+//		graph.useDFS("A", "C", 2);
+//		graph.useBFS("A", null, 1);
 				
 	}
 }
