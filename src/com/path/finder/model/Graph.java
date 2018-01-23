@@ -7,14 +7,23 @@ import java.util.Map;
 
 public class Graph 
 {
+	//Map to store the vertex 
 	private Map<String, Vertex> vertexMap;
+	//Map to store the edges
 	private Map<String, Edge> edgeMap;
-	private int vertexCount;
-	private int edgeCount;
+	//List to store the different available path for DFS
 	private List<List<String>> pathList;
+	//Map to store distance info for Dijkstra
+	private Map<String,Integer> distanceMap;
+	//Map to store distance from info for Dijkstra
+	private Map<String,String> distanceFromMap;
+	//Integer to store vertex count
+	private int vertexCount;
+	//Integer to store edge count
+	private int edgeCount;
 	
 	//Constructor Initializing the Vertex and Edge Map
-	public Graph() 
+ 	public Graph() 
 	{
 		vertexMap = new HashMap<String, Vertex>();
 		edgeMap = new HashMap<String, Edge>();
@@ -152,7 +161,54 @@ public class Graph
 			}
 		}
 	}
-
+	
+	public void useDijkstra(String source)
+	{
+		Vertex sourceVertex = vertexMap.get(source);
+		List<Edge> queue = new ArrayList<Edge>();
+		distanceMap = new HashMap<String,Integer>();
+		distanceFromMap = new HashMap<String,String>();
+		
+		if(sourceVertex != null)
+		{
+			sourceVertex.setVisited(true);
+			queue.addAll(sourceVertex.getEdgeList());
+			distanceMap.put(source, 0);
+			while(!queue.isEmpty())
+			{
+				if(!queue.get(0).getTwo().isVisited())
+				{
+					if(distanceMap.containsKey(queue.get(0).getTwo().getLabel()) && distanceMap.get(queue.get(0).getTwo().getLabel()) > (distanceMap.get(queue.get(0).getOne().getLabel()) + queue.get(0).getWeight()))
+					{
+						distanceMap.put(queue.get(0).getTwo().getLabel(),distanceMap.get(queue.get(0).getOne().getLabel()) + queue.get(0).getWeight());
+						distanceFromMap.put(queue.get(0).getTwo().getLabel(), queue.get(0).getOne().getLabel());
+					}
+					else
+					{
+						distanceMap.put(queue.get(0).getTwo().getLabel(), queue.get(0).getWeight());
+						distanceFromMap.put(queue.get(0).getTwo().getLabel(), queue.get(0).getOne().getLabel());
+						
+					}
+					queue.get(0).getTwo().setVisited(true);
+					queue.addAll(queue.get(0).getTwo().getEdgeList());
+				}
+				queue.remove(0);
+			}
+			
+			System.out.println(distanceMap.size());
+			System.out.println(distanceFromMap.size());
+			for(String k : distanceMap.keySet())
+			{
+				System.out.print(" " + k + "-" + distanceMap.get(k) + " ");
+			}
+			System.out.println("");
+			for(String k : distanceFromMap.keySet())
+			{
+				System.out.print(" " + k + "-" + distanceFromMap.get(k) + " ");	
+			}
+		}
+	}
+	
 	public int getVertexCount() 
 	{
 		return vertexCount;
@@ -175,12 +231,17 @@ public class Graph
 
 	public static void main(String[] args) 
 	{
-		String[] labels = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P" };
-		String[] coordinates = { "1,2", "1,1", "1,0", "2,0", "2,1", "2,2", "3,1", "3,0", "4,0", "5,0", "5,1", "5,2","6,2", "6,1", "6,0", "4,1" };
-		String[] edges = { "A-B", "A-F", "E-F", "B-E", "B-C", "C-D", "D-E", "E-G", "D-H", "H-G", "H-I", "I-P", "P-K","I-J", "J-K", "K-N", "J-O", "O-N", "K-L", "L-M", "N-M" };
+//		String[] labels = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P" };
+//		String[] coordinates = { "1,2", "1,1", "1,0", "2,0", "2,1", "2,2", "3,1", "3,0", "4,0", "5,0", "5,1", "5,2","6,2", "6,1", "6,0", "4,1" };
+//		String[] edges = { "A-B", "A-F", "E-F", "B-E", "B-C", "C-D", "D-E", "E-G", "D-H", "H-G", "H-I", "I-P", "P-K","I-J", "J-K", "K-N", "J-O", "O-N", "K-L", "L-M", "N-M" };
 //		String[] labels = {"A","B","C","D"};
 //		String[] coordinates = {"0,1","1,1","2,1","1,0"};
 //		String[] edges = {"A-B","A-D","B-C","D-C","B-D"};
+		
+		String[] labels = {"A","B","C","D","E"};
+		String[] coordinates = {"0,1","1,1","2,1","3,1","2,0"};
+		String[] edges = {"A-B","A-E","B-E","B-C","C-E","C-D","D-E"};
+		
 		Graph graph = new Graph();
 		
 		for (int i = 0; i < labels.length; i++) 
@@ -197,6 +258,6 @@ public class Graph
 //		graph.useDFS("A",null, 1);
 //		graph.useDFS("A", "C", 2);
 //		graph.useBFS("A", null, 1);
-				
+		graph.useDijkstra("A");		
 	}
 }
