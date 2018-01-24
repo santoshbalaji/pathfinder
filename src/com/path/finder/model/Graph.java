@@ -178,6 +178,7 @@ public class Graph
 			{
 				if(!queue.get(0).getTwo().isVisited())
 				{
+					System.out.println(queue.get(0).getTwo().getLabel());
 					if(distanceMap.containsKey(queue.get(0).getTwo().getLabel()) && distanceMap.get(queue.get(0).getTwo().getLabel()) > (distanceMap.get(queue.get(0).getOne().getLabel()) + queue.get(0).getWeight()))
 					{
 						distanceMap.put(queue.get(0).getTwo().getLabel(),distanceMap.get(queue.get(0).getOne().getLabel()) + queue.get(0).getWeight());
@@ -185,7 +186,7 @@ public class Graph
 					}
 					else
 					{
-						distanceMap.put(queue.get(0).getTwo().getLabel(), queue.get(0).getWeight());
+						distanceMap.put(queue.get(0).getTwo().getLabel(), distanceMap.get(queue.get(0).getOne().getLabel()) + queue.get(0).getWeight());
 						distanceFromMap.put(queue.get(0).getTwo().getLabel(), queue.get(0).getOne().getLabel());
 						
 					}
@@ -231,16 +232,16 @@ public class Graph
 
 	public static void main(String[] args) 
 	{
-//		String[] labels = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P" };
-//		String[] coordinates = { "1,2", "1,1", "1,0", "2,0", "2,1", "2,2", "3,1", "3,0", "4,0", "5,0", "5,1", "5,2","6,2", "6,1", "6,0", "4,1" };
-//		String[] edges = { "A-B", "A-F", "E-F", "B-E", "B-C", "C-D", "D-E", "E-G", "D-H", "H-G", "H-I", "I-P", "P-K","I-J", "J-K", "K-N", "J-O", "O-N", "K-L", "L-M", "N-M" };
+		String[] labels = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P" };
+		String[] coordinates = { "1,2", "1,1", "1,0", "2,0", "2,1", "2,2", "3,1", "3,0", "4,0", "5,0", "5,1", "5,2","6,2", "6,1", "6,0", "4,1" };
+		String[] edges = { "A-B", "A-F", "E-F", "B-E", "B-C", "C-D", "D-E", "E-G", "D-H", "H-G", "H-I", "I-P", "P-K","I-J", "J-K", "K-N", "J-O", "O-N", "K-L", "L-M", "N-M" };
 //		String[] labels = {"A","B","C","D"};
 //		String[] coordinates = {"0,1","1,1","2,1","1,0"};
 //		String[] edges = {"A-B","A-D","B-C","D-C","B-D"};
 		
-		String[] labels = {"A","B","C","D","E"};
-		String[] coordinates = {"0,1","1,1","2,1","3,1","2,0"};
-		String[] edges = {"A-B","A-E","B-E","B-C","C-E","C-D","D-E"};
+//		String[] labels = {"A","B","C","D","E"};
+//		String[] coordinates = {"0,1","1,1","2,1","3,1","2,0"};
+//		String[] edges = {"A-B","A-E","B-E","B-C","C-E","C-D","D-E"};
 		
 		Graph graph = new Graph();
 		
@@ -258,6 +259,6 @@ public class Graph
 //		graph.useDFS("A",null, 1);
 //		graph.useDFS("A", "C", 2);
 //		graph.useBFS("A", null, 1);
-		graph.useDijkstra("A");		
+		graph.useDijkstra("N");		
 	}
 }
