@@ -56,7 +56,7 @@ public class PathFinder
 			{
 				System.out.print(" " + path + " ");
 			}
-			System.out.println("");
+			System.out.println("\n");
 		}
 		else
 		{
@@ -65,10 +65,10 @@ public class PathFinder
 		return pathList;
 	}
 	
-	//Method for detecting collision across the two obtained path
-	private void checkForCollision(List<String> path1, List<String> path2)
+	//Method for detecting collision across the two obtained path and provide suggestions for collision free way
+	private void collisionAvoidance(List<String> path1, List<String> path2)
 	{
-		graph.checkForCollision(path1, path2);
+		graph.collisionAvoidance(path1, path2);
 	}
 	
 	public static void main(String[] args)
@@ -77,6 +77,6 @@ public class PathFinder
 		p.addVertices(labels,edges,coordinates);
 		List<String> path1 = p.findShortestPath("A","M");
 		List<String> path2 = p.findShortestPath("N", "B");
-		p.checkForCollision(path1, path2);
+		p.collisionAvoidance(path1, path2);
 	}
 }

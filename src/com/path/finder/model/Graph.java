@@ -249,11 +249,103 @@ public class Graph
 		System.out.println("");
 	}
 	
-	public void checkForCollision(List<String> path1, List<String> path2)
+	//Method for detecting collision across the two obtained path and provide suggestions for collision free way
+	public void collisionAvoidance(List<String> path1, List<String> path2)
 	{
-		if(path1.size() > path2.size())
+		int position = -1,backPos1 = 0, frontPos1 = 0, backPos2 = 0, frontPos2 = 0;
+		//1. Looking for collision for robots on the path. My assumption is that only one robot can use one path and occupy one node. 
+		for(int i = 0; i < path1.size() && i < path2.size(); i++)
 		{
-			
+			if(path1.get(i).equals(path2.get(i)))
+			{
+				position = i;
+				backPos1 = -1;
+				frontPos1 = 1;
+				backPos2 = -1;
+				frontPos2 = 1;
+				break;
+			}
+			else if ( i+1 < path2.size() && path1.get(i).equals(path2.get(i + 1)))
+			{
+				position = i;
+				backPos1 =  -1;
+				frontPos1 = 2;
+				backPos2 = 0;
+				frontPos2 = 1;
+				break;
+			}
+		}
+		
+		//2. Check for collision presence. If present then route is re-examined to provide collision free way.
+		if(position == -1)
+		{
+			System.out.println("No collision detected. You are good to go !!!!!");
+		}
+		else
+		{
+			collisionAvoidanecByWaiting(position, backPos1, frontPos1,path1, path2);
+			collisionAvoidanceByReRouting(position, backPos2, frontPos2 ,path1,path2);
+		}
+	}
+	
+	//Method to provide collision free way by making a robot wait at a node
+	private void collisionAvoidanecByWaiting(int position, int backPos, int frontPos, List<String> path1, List<String> path2)
+	{
+		System.out.println("Collision detected at position " + position + " . Looking for possible route ...");
+		System.out.println("Any of the following ways can be adopted to avoid collision ....");
+		for(int i = position + backPos,j = position + frontPos;  i >= 0 && j < path2.size(); i--,j++)
+		{
+			if(!path1.get(i).equals(path2.get(j)))
+			{
+				System.out.println("The bot 1 can be stopped at " +  path1.get(i) + " for "+ (j - i -1) +" second to avoid collision");
+				break;
+			}
+		}
+		for(int i = position + backPos,j = position + frontPos;  i >= 0 && j < path1.size(); i--,j++)
+		{
+			if(!path2.get(i).equals(path1.get(j)))
+			{
+				System.out.println("The bot 2 can be stopped at " +  path2.get(i) + " for " + (j - i - 1) +" second to avoid collision");
+				break;
+			}
+		}
+	}
+	
+	//Method to provide collision free way by waiting in a near by node and following the original path later 
+	public void collisionAvoidanceByReRouting(int position,int backPos, int frontPos, List<String> path1, List<String> path2)
+	{
+		boolean status = false;
+		for(int i = position + backPos,j = position + frontPos;  i >= 0 && j < path2.size(); i--,j++)
+		{
+			for(Edge edge : vertexMap.get(path1.get(i)).getEdgeList())
+			{
+				if(!edge.getTwo().getLabel().equals(path2.get(j)) && !path1.contains(edge.getTwo().getLabel()))
+				{
+					System.out.println("The bot 1 can be routed to " + edge.getTwo().getLabel() + " from " + edge.getOne().getLabel() + " with additional time of " + (j -i + 1 ) + " seconds");
+					status = true;
+					break;
+				}
+			}
+			if(status)
+			{
+				break;
+			}
+		}
+		for(int i = position + backPos,j = position + frontPos;  i >= 0 && j < path1.size(); i--,j++)
+		{
+			for(Edge edge : vertexMap.get(path2.get(i)).getEdgeList())
+			{
+				if(!edge.getTwo().getLabel().equals(path1.get(j)) && !path2.contains(edge.getTwo().getLabel()))
+				{
+					System.out.println("The bot 2 can be routed to " + edge.getTwo().getLabel() + " from " + edge.getOne().getLabel() + " with additional time of " + (j -i + 1 ) + " seconds");
+					status = true;
+					break;
+				}
+			}
+			if(status)
+			{
+				break;
+			}
 		}
 	}
 	
