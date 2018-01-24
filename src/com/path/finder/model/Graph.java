@@ -249,6 +249,14 @@ public class Graph
 		System.out.println("");
 	}
 	
+	public void checkForCollision(List<String> path1, List<String> path2)
+	{
+		if(path1.size() > path2.size())
+		{
+			
+		}
+	}
+	
 	public int getVertexCount() 
 	{
 		return vertexCount;
